@@ -11,50 +11,63 @@ type ProductCardProps = {
   stock: number;
 };
 
-export default function ProductCard({  
+export default function ProductCard({
   id,
   name,
   description,
   price,
   image,
   category,
-  stock, }: ProductCardProps) {
+  stock,
+}: ProductCardProps) {
   return (
-
-  
-  <div className="w-64 cursor-pointer overflow-hidden rounded-lg shadow-sm">
-    <div className="w-64 rounded-lg p-4 shadow-sm">
+    <div className="group">
       <Link href={`/products/${id}`}>
-    <div className="relative mb-4 h-48 overflow-hidden rounded-md">
-        <Image
-          src={image}
-          alt={name}
-          fill
-          className="object-cover"
-        />
-      </div>
-      <div className="p-4">
-       <p className="text-sm text-gray-500">{category}</p>
-             <h2 className="mt-1 text-lg font-semibold">
-        {name}
-      </h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <div className="relative h-64 overflow-hidden rounded-2xl bg-[#e3dccf] max-w-[400px]">
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-cover transition duration-300 group-hover:scale-105"
+          />
+        </div>
+      </Link>
+
+      <div className="px-1 pt-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-sm text-[#5c5449]">{category}</p>
+
+            <Link href={`/products/${id}`}>
+              <h2 className="mt-1 text-lg font-medium text-[#1c1917] hover:text-[#0f5c5a]">
+                {name}
+              </h2>
+            </Link>
+          </div>
+
+          <p className="text-lg font-medium text-[#1c1917]">
+            ₹{price}
+          </p>
+        </div>
+
+        <p className="mt-2 text-sm text-[#5c5449] line-clamp-2">
           {description}
         </p>
 
-      <p className="mt-2 text-gray-600">
-        ₹{price}
-      </p>
-         <p className="mt-1 text-sm text-gray-500">
-          {stock} available
-        </p>
-      </div>
-      </Link>
-      <button className=" w-full rounded-md bg-black px-4 py-2 text-white">
-        Add to cart
-      </button>
-    </div>
-  </div>
+        <div className="mt-3 flex items-center justify-between">
+          <p className="text-sm text-[#5c5449]">
+            {stock > 0 ? `${stock} in stock` : "Sold out"}
+          </p>
 
+          <button
+            type="button"
+            disabled={stock === 0}
+            className="rounded-full bg-[#0f5c5a] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Add to cart
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
