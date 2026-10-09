@@ -13,14 +13,16 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
-  description String   @default("")
+  description String      @default("")
   price       Int
   image       String
-  category    String   @default("General")
-  stock       Int      @default(0)
-  createdAt   DateTime @default(now())
+  category    String      @default("General")
+  stock       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
 }
 
 model User {
@@ -32,6 +34,35 @@ model User {
   createdAt     DateTime       @default(now())
 
   refreshTokens RefreshToken[]
+  cart          Cart?
+  orders        Order[]
+}
+
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  userId          Int
+  totalAmount     Int
+  status          String      @default("PENDING")
+  paymentStatus   String      @default("PENDING")
+  stripeSessionId String?     @unique
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user            User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id            Int      @id @default(autoincrement())
+  orderId       Int
+  productId     Int
+  productName   String
+  price         Int
+  quantity      Int
+
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
 }
 
 model RefreshToken {
@@ -42,4 +73,26 @@ model RefreshToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
 }

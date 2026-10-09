@@ -37,7 +37,7 @@ export default function LoginPage() {
       }
 
       router.push("/products");
-      window.location.reload();      
+      router.refresh();     
     } catch {
       setError("Something went wrong");
     } finally {

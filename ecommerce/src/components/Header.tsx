@@ -15,6 +15,7 @@ export default function Header() {
   const router = useRouter();
 
   const [user, setUser] = useState<User | null>(null);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     async function getUser() {
@@ -33,7 +34,34 @@ export default function Header() {
       }
     }
 
+
+
+    
+async function getCartCount() {
+  try {
+    const response = await fetch("/api/cart");
+
+    if (!response.ok) {
+      setCartCount(0);
+      return;
+    }
+
+    const data = await response.json();
+
+    const count = (data.cart?.items ?? []).reduce(
+      (total: number, item: { quantity: number }) =>
+        total + item.quantity,
+      0
+    );
+
+    setCartCount(count);
+  } catch {
+    setCartCount(0);
+  }
+}
+
     getUser();
+    getCartCount();
   }, []);
 
   async function handleLogout() {
@@ -64,19 +92,21 @@ export default function Header() {
             Shop
           </Link>
 
+        {user && (
           <Link
             href="/orders"
-            className="py-2 text-sm hover:text-[#0f5c5a]"
+            className="text-sm text-[#5c5449] transition hover:text-[#0f5c5a]"
           >
-            Orders
+            My Orders
           </Link>
+        )}
         </nav>
 
         <Link
           href="/cart"
           className="rounded-full bg-[#0f5c5a] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
         >
-          Cart · 0
+          Cart · {cartCount}
         </Link>
 
         {user ? (
