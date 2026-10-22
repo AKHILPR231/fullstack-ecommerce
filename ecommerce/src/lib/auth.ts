@@ -28,7 +28,6 @@ export async function createRefreshToken(userId: number) {
 
 export async function verifyAccessToken(token: string) {
   const result = await jwtVerify(token, accessSecret);
-
   return result.payload;
 }
 
